@@ -37,10 +37,7 @@ class HomeController extends Controller
     {
         try
         {
-            $subcategoryCount = Subcategory::where('is_active', 1)->count();
-            $productCount = Product::where('is_active', 1)->count();
-
-            return view('home',compact('subcategoryCount','productCount'));
+            return redirect()->route('admin.dashboard');
 
         } catch (\Exception $e) {
         report($e);

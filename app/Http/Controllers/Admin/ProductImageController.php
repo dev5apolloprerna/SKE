@@ -28,6 +28,169 @@ class ProductImageController extends Controller
 
         return view('admin.product-images.index', compact('images', 'search'));
     }
+    public function manageByProduct(Request $request, $product_id)
+{
+    $product = Product::findOrFail($product_id);
+    $search = $request->search;
+
+    $images = ProductImage::where('product_id', $product_id)
+        ->when($search, function ($query) use ($search) {
+            $query->where('alt_text', 'LIKE', "%{$search}%");
+        })
+        ->orderBy('sort_order', 'asc')
+        ->paginate(10);
+
+    $editImage = null;
+
+    return view('admin.product-images.manage-product', compact(
+        'product',
+        'images',
+        'editImage',
+        'search'
+    ));
+}
+
+public function storeByProduct(Request $request, $product_id)
+{
+    Product::findOrFail($product_id);
+
+    $request->validate([
+        'image_path' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+        'alt_text' => 'nullable|max:255',
+        'sort_order' => 'nullable|integer',
+        'is_primary' => 'required|in:0,1',
+    ]);
+
+    if ($request->is_primary == 1) {
+        ProductImage::where('product_id', $product_id)->update(['is_primary' => 0]);
+    }
+
+    $file = $request->file('image_path');
+    $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+    $file->move(public_path($this->uploadPath), $fileName);
+
+    ProductImage::create([
+        'product_id' => $product_id,
+        'image_path' => $this->uploadPath . '/' . $fileName,
+        'alt_text' => $request->alt_text,
+        'sort_order' => $request->sort_order ?? 0,
+        'is_primary' => $request->is_primary,
+    ]);
+
+    return redirect()->route('admin.products.images', $product_id)
+        ->with('success', 'Product image added successfully.');
+}
+
+public function editByProduct(Request $request, $product_id, $id)
+{
+    $product = Product::findOrFail($product_id);
+    $search = $request->search;
+
+    $images = ProductImage::where('product_id', $product_id)
+        ->when($search, function ($query) use ($search) {
+            $query->where('alt_text', 'LIKE', "%{$search}%");
+        })
+        ->orderBy('sort_order', 'asc')
+        ->paginate(10);
+
+    $editImage = ProductImage::where('product_id', $product_id)
+        ->where('id', $id)
+        ->firstOrFail();
+
+    return view('admin.product-images.manage-product', compact(
+        'product',
+        'images',
+        'editImage',
+        'search'
+    ));
+}
+
+public function updateByProduct(Request $request, $product_id, $id)
+{
+    $image = ProductImage::where('product_id', $product_id)
+        ->where('id', $id)
+        ->firstOrFail();
+
+    $request->validate([
+        'image_path' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        'alt_text' => 'nullable|max:255',
+        'sort_order' => 'nullable|integer',
+        'is_primary' => 'required|in:0,1',
+    ]);
+
+    if ($request->is_primary == 1) {
+        ProductImage::where('product_id', $product_id)
+            ->where('id', '!=', $image->id)
+            ->update(['is_primary' => 0]);
+    }
+
+    $imagePath = $image->image_path;
+
+    if ($request->hasFile('image_path')) {
+        if ($image->image_path && File::exists(public_path($image->image_path))) {
+            File::delete(public_path($image->image_path));
+        }
+
+        $file = $request->file('image_path');
+        $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path($this->uploadPath), $fileName);
+
+        $imagePath = $this->uploadPath . '/' . $fileName;
+    }
+
+    $image->update([
+        'image_path' => $imagePath,
+        'alt_text' => $request->alt_text,
+        'sort_order' => $request->sort_order ?? 0,
+        'is_primary' => $request->is_primary,
+    ]);
+
+    return redirect()->route('admin.products.images', $product_id)
+        ->with('success', 'Product image updated successfully.');
+}
+
+public function deleteByProduct($product_id, $id)
+{
+    $image = ProductImage::where('product_id', $product_id)
+        ->where('id', $id)
+        ->firstOrFail();
+
+    if ($image->image_path && File::exists(public_path($image->image_path))) {
+        File::delete(public_path($image->image_path));
+    }
+
+    $image->delete();
+
+    return redirect()->route('admin.products.images', $product_id)
+        ->with('success', 'Product image deleted successfully.');
+}
+
+public function bulkDeleteByProduct(Request $request, $product_id)
+{
+    if (!$request->ids) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Please select records.',
+        ]);
+    }
+
+    $images = ProductImage::where('product_id', $product_id)
+        ->whereIn('id', $request->ids)
+        ->get();
+
+    foreach ($images as $image) {
+        if ($image->image_path && File::exists(public_path($image->image_path))) {
+            File::delete(public_path($image->image_path));
+        }
+
+        $image->delete();
+    }
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Selected product images deleted successfully.',
+    ]);
+}
 
     public function create()
     {

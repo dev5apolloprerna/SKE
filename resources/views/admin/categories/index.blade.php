@@ -87,6 +87,11 @@
                                                     <a href="{{ route('admin.categories.edit', $category->slug) }}" class="btn btn-sm btn-primary" title="Edit">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
+                                                    <a href="{{ route('admin.categories.subcategories', $category->id) }}"
+                                                           class="btn btn-sm btn-info"
+                                                           title="Subcategories">
+                                                            <i class="fas fa-list"></i>
+                                                        </a>
                                                     <button type="button" class="btn btn-sm btn-danger singleDelete" data-slug="{{ $category->slug }}" title="Delete">
                                                         <i class="fas fa-trash"></i>
                                                     </button>

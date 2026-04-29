@@ -39,6 +39,24 @@
                 </div>
 
                 <div class="col-xl-3 col-md-6">
+                    <a href="{{ route('admin.categories.index') }}" class="text-decoration-none">
+                        <div class="card shadow-sm dashboard-card sparkle-card gold-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <p class="mb-1">Subcategories</p>
+                                        <h2>{{ $subcategoryCount }}</h2>
+                                    </div>
+                                    <div class="dashboard-icon">
+                                        <i class="fas fa-list"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                {{--<div class="col-xl-3 col-md-6">
                     <a href="{{ route('admin.subcategories.index') }}" class="text-decoration-none">
                         <div class="card shadow-sm dashboard-card sparkle-card gold-card">
                             <div class="card-body">
@@ -54,7 +72,7 @@
                             </div>
                         </div>
                     </a>
-                </div>
+                </div> --}}
 
                 <div class="col-xl-3 col-md-6">
                     <a href="{{ route('admin.products.index') }}" class="text-decoration-none">
@@ -93,7 +111,7 @@
                 </div>
 
                 <div class="col-xl-3 col-md-6">
-                    <a href="{{ route('admin.product-images.index') }}" class="text-decoration-none">
+                    <a href="{{ route('admin.products.index') }}" class="text-decoration-none">
                         <div class="card shadow-sm dashboard-card sparkle-card blue-card">
                             <div class="card-body">
                                 <div class="d-flex align-items-center justify-content-between">

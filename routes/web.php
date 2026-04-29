@@ -79,13 +79,44 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 });
 
 
-
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::resource('subcategories', SubcategoryController::class);
-    Route::post('subcategories-bulk-delete', [SubcategoryController::class, 'bulkDelete'])
-        ->name('subcategories.bulkDelete');
-    Route::post('subcategories-status/{slug}', [SubcategoryController::class, 'changeStatus'])
-        ->name('subcategories.changeStatus');
+
+    Route::get('categories/{category_id}/subcategories', [SubcategoryController::class, 'manageByCategory'])
+        ->name('categories.subcategories');
+
+    Route::post('categories/{category_id}/subcategories/store', [SubcategoryController::class, 'storeByCategory'])
+        ->name('categories.subcategories.store');
+
+    Route::get('categories/{category_id}/subcategories/{id}/edit', [SubcategoryController::class, 'editByCategory'])
+        ->name('categories.subcategories.edit');
+
+    Route::put('categories/{category_id}/subcategories/{id}/update', [SubcategoryController::class, 'updateByCategory'])
+        ->name('categories.subcategories.update');
+
+    Route::delete('categories/{category_id}/subcategories/{id}/delete', [SubcategoryController::class, 'deleteByCategory'])
+        ->name('categories.subcategories.delete');
+
+    Route::post('categories/{category_id}/subcategories/bulk-delete', [SubcategoryController::class, 'bulkDeleteByCategory'])
+        ->name('categories.subcategories.bulkDelete');
+
+
+    Route::get('products/{product_id}/images', [ProductImageController::class, 'manageByProduct'])
+        ->name('products.images');
+
+    Route::post('products/{product_id}/images/store', [ProductImageController::class, 'storeByProduct'])
+        ->name('products.images.store');
+
+    Route::get('products/{product_id}/images/{id}/edit', [ProductImageController::class, 'editByProduct'])
+        ->name('products.images.edit');
+
+    Route::put('products/{product_id}/images/{id}/update', [ProductImageController::class, 'updateByProduct'])
+        ->name('products.images.update');
+
+    Route::delete('products/{product_id}/images/{id}/delete', [ProductImageController::class, 'deleteByProduct'])
+        ->name('products.images.delete');
+
+    Route::post('products/{product_id}/images/bulk-delete', [ProductImageController::class, 'bulkDeleteByProduct'])
+        ->name('products.images.bulkDelete');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -96,11 +127,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('product-image/{id}', [ProductController::class, 'deleteImage'])->name('products.deleteImage');
 });
 
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::resource('product-images', ProductImageController::class)->except(['show']);
-    Route::post('product-images-bulk-delete', [ProductImageController::class, 'bulkDelete'])
-        ->name('product-images.bulkDelete');
-});
 
 
 Route::prefix('admin')->name('admin.')->group(function () {
