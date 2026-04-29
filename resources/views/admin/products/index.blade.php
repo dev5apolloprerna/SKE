@@ -100,6 +100,11 @@
                                                        class="btn btn-sm btn-primary">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
+                                                    <a href="{{ route('admin.products.images', $product->id) }}"
+                                                       class="btn btn-sm btn-info"
+                                                       title="Product Images">
+                                                        <i class="fas fa-images"></i>
+                                                    </a>
 
                                                     <form action="{{ route('admin.products.destroy', $product->slug) }}"
                                                           method="POST"
