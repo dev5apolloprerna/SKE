@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Hash;
 use Session;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Role;
-use App\Models\Subcategory;
-use App\Models\Product;
-use App\Models\Inquiry;
 
 use Carbon\Carbon;
 
@@ -38,7 +35,6 @@ class HomeController extends Controller
         try
         {
             return redirect()->route('admin.dashboard');
-
         } catch (\Exception $e) {
         report($e);
         return false;

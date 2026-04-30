@@ -8,10 +8,11 @@ use App\Models\Inquiry;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Subcategory;
+use App\Models\GalleryImage;
 
 class DashboardController extends Controller
 {
-    public function index()
+     public function index()
     {
         $categoryCount = Category::where('is_active', 1)->count();
         $subcategoryCount = Subcategory::where('is_active', 1)->count();
@@ -20,6 +21,7 @@ class DashboardController extends Controller
         $productImageCount = ProductImage::count();
         $newInquiryCount = Inquiry::where('status', 'new')->count();
         $totalInquiryCount = Inquiry::count();
+        $galleryImageCount = GalleryImage::where('is_active', 1)->count();
 
         return view('admin.dashboard.index', compact(
             'categoryCount',
@@ -28,7 +30,8 @@ class DashboardController extends Controller
             'featuredProductCount',
             'productImageCount',
             'newInquiryCount',
-            'totalInquiryCount'
+            'totalInquiryCount',
+            'galleryImageCount'
         ));
     }
 }

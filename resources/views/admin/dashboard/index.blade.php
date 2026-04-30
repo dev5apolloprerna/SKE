@@ -127,6 +127,24 @@
                         </div>
                     </a>
                 </div>
+                <div class="col-xl-3 col-md-6">
+                    
+                    <a href="{{ route('admin.gallery-images.index') }}" class="text-decoration-none">
+                        <div class="card shadow-sm dashboard-card sparkle-card purple-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <p class="mb-1">Gallery Images</p>
+                                        <h2>{{ $galleryImageCount }}</h2>
+                                    </div>
+                                    <div class="dashboard-icon">
+                                        <i class="fas fa-images"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
 
                 <div class="col-xl-3 col-md-6">
                     <a href="{{ route('admin.inquiries.index') }}" class="text-decoration-none">

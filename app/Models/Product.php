@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -26,8 +28,14 @@ class Product extends Model
     ];
 
     protected $casts = [
+        'is_featured'    => 'boolean',
+        'is_active'      => 'boolean',
         'specifications' => 'array',
+        'length_mm'      => 'float',
+        'width_mm'       => 'float',
+        'height_mm'      => 'float',
     ];
+
 
     public function category()
     {
@@ -47,5 +55,31 @@ class Product extends Model
     public function primaryImage()
     {
         return $this->hasOne(ProductImage::class)->where('is_primary', 1);
+    }
+     public function getPrimaryImageAttribute(): string
+    {
+        $img = $this->images()->first();
+        if ($img && file_exists(public_path($img->image_url))) {
+            return asset($img->image_url);
+        }
+        return asset('images/default-product.jpg');
+    }
+
+    /** Dimension string e.g. 300 × 200 × 100 mm */
+    public function getDimensionsAttribute(): string
+    {
+        $parts = array_filter([$this->length_mm, $this->width_mm, $this->height_mm]);
+        if (empty($parts)) return '—';
+        return implode(' × ', array_map(fn($v) => (int)$v, $parts)) . ' mm';
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', 1);
+    }
+
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', 1)->where('is_active', 1);
     }
 }
