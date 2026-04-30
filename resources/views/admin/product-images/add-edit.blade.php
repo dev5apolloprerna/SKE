@@ -65,7 +65,7 @@
                                         <input type="file" name="image_path" class="form-control">
 
                                         @if($image && $image->image_path)
-                                            <img src="{{ asset($image->image_path) }}"
+                                            <img src="{{ asset($image->image_url) }}"
                                                  width="100"
                                                  height="100"
                                                  class="mt-2 rounded border"

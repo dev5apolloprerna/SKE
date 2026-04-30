@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImageController;
 use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GalleryImageController;
 
 
 
@@ -127,7 +128,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('product-image/{id}', [ProductController::class, 'deleteImage'])->name('products.deleteImage');
 });
 
-
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('gallery-images', [GalleryImageController::class, 'index'])->name('gallery-images.index');
+    Route::post('gallery-images/store', [GalleryImageController::class, 'store'])->name('gallery-images.store');
+    Route::get('gallery-images/{id}/edit', [GalleryImageController::class, 'edit'])->name('gallery-images.edit');
+    Route::put('gallery-images/{id}/update', [GalleryImageController::class, 'update'])->name('gallery-images.update');
+    Route::delete('gallery-images/{id}/delete', [GalleryImageController::class, 'destroy'])->name('gallery-images.destroy');
+    Route::post('gallery-images/bulk-delete', [GalleryImageController::class, 'bulkDelete'])->name('gallery-images.bulkDelete');
+});
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('inquiries', InquiryController::class)->only(['index', 'edit', 'update', 'destroy']);

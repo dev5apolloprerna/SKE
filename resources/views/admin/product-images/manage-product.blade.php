@@ -53,9 +53,9 @@
                                     </label>
                                     <input type="file" name="image_path" class="form-control">
 
-                                    @if($editImage && $editImage->image_path)
-                                        <a href="{{ asset($editImage->image_path) }}" target="_blank">
-                                            <img src="{{ asset($editImage->image_path) }}"
+                                    @if($editImage && $editImage->image_url)
+                                        <a href="{{ asset($editImage->image_url) }}" target="_blank">
+                                            <img src="{{ asset($editImage->url) }}"
                                                  width="100"
                                                  height="100"
                                                  class="mt-2 rounded border"
@@ -193,15 +193,15 @@
                                                            value="{{ $image->id }}">
                                                 </td>
                                                 <td>
-                                                    <a href="{{ asset($image->image_path) }}" target="_blank">
-                                                        <img src="{{ asset($image->image_path) }}"
+                                                    <a href="{{ asset($image->image_url) }}" target="_blank">
+                                                        <img src="{{ asset($image->image_url) }}"
                                                              width="70"
                                                              height="70"
                                                              style="object-fit:cover;border-radius:6px;">
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ asset($image->image_path) }}" target="_blank">
+                                                    <a href="{{ asset($image->image_url) }}" target="_blank">
                                                         View Image
                                                     </a>
                                                 </td>

@@ -30,6 +30,13 @@ $roleid = auth()->user()->role_id;
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('admin.gallery-images.index') }}"
+                       class="nav-link {{ request()->is('admin/gallery-images*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-images"></i>
+                        Gallery Images
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('admin.inquiries.index') }}"
                        class="nav-link {{ request()->is('admin/inquiries*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-envelope"></i>

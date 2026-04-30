@@ -69,9 +69,7 @@
                                                 </td>
                                                 <td>
                                                     @if($product->primaryImage)
-                                                        <img src="{{ asset($product->primaryImage->image_path) }}"
-                                                             width="60" height="60"
-                                                             style="object-fit:cover;border-radius:6px;">
+                                                       -
                                                     @else
                                                         -
                                                     @endif

@@ -226,7 +226,7 @@
 
         if (categoryId) {
             $.ajax({
-                url: "{{ url('admin/get-subcategories') }}/" + categoryId,
+                url: "{{ url('../SKE/admin/get-subcategories') }}/" + categoryId,
                 type: "GET",
                 success: function (data) {
                     $.each(data, function (key, value) {

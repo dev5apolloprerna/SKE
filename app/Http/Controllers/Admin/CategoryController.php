@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\ImageUploadHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -19,9 +19,10 @@ class CategoryController extends Controller
 
         if ($request->filled('search')) {
             $search = trim($request->search);
+
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('description', 'LIKE', "%{$search}%");
+                    ->orWhere('description', 'LIKE', "%{$search}%");
             });
         }
 
@@ -36,6 +37,7 @@ class CategoryController extends Controller
     public function create()
     {
         $category = new Category();
+
         return view('admin.categories.add-edit', compact('category'));
     }
 
@@ -44,6 +46,7 @@ class CategoryController extends Controller
         $request->validate($this->rules());
 
         $category = new Category();
+
         $category->name = $request->name;
         $category->slug = $this->uniqueSlug($request->name);
         $category->description = $request->description;
@@ -51,17 +54,23 @@ class CategoryController extends Controller
         $category->is_active = $request->is_active ?? 1;
 
         if ($request->hasFile('image_url')) {
-            $category->image_url = $this->uploadImage($request->file('image_url'));
+            $category->image_url = ImageUploadHelper::upload(
+                $request->file('image_url'),
+                $this->imageFolder
+            );
         }
 
         $category->save();
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category added successfully.');
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Category added successfully.');
     }
 
     public function edit(string $slug)
     {
         $category = Category::where('slug', $slug)->firstOrFail();
+
         return view('admin.categories.add-edit', compact('category'));
     }
 
@@ -78,20 +87,27 @@ class CategoryController extends Controller
         $category->is_active = $request->is_active ?? 1;
 
         if ($request->hasFile('image_url')) {
-            $this->unlinkImage($category->image_url);
-            $category->image_url = $this->uploadImage($request->file('image_url'));
+            ImageUploadHelper::delete($category->image_url);
+
+            $category->image_url = ImageUploadHelper::upload(
+                $request->file('image_url'),
+                $this->imageFolder
+            );
         }
 
         $category->save();
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully.');
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Category updated successfully.');
     }
 
     public function destroy(string $slug)
     {
         $category = Category::where('slug', $slug)->firstOrFail();
 
-        $this->unlinkImage($category->image_url);
+        ImageUploadHelper::delete($category->image_url);
+
         $category->delete();
 
         return response()->json([
@@ -110,7 +126,7 @@ class CategoryController extends Controller
         $categories = Category::whereIn('slug', $request->slugs)->get();
 
         foreach ($categories as $category) {
-            $this->unlinkImage($category->image_url);
+            ImageUploadHelper::delete($category->image_url);
             $category->delete();
         }
 
@@ -128,6 +144,7 @@ class CategoryController extends Controller
         ]);
 
         $category = Category::where('slug', $request->slug)->firstOrFail();
+
         $category->is_active = $request->status;
         $category->save();
 
@@ -167,26 +184,5 @@ class CategoryController extends Controller
         }
 
         return $slug;
-    }
-
-    private function uploadImage($file): string
-    {
-        $destination = public_path($this->imageFolder);
-
-        if (!File::exists($destination)) {
-            File::makeDirectory($destination, 0755, true);
-        }
-
-        $fileName = time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
-        $file->move($destination, $fileName);
-
-        return $this->imageFolder . '/' . $fileName;
-    }
-
-    private function unlinkImage(?string $path): void
-    {
-        if ($path && File::exists(public_path($path))) {
-            File::delete(public_path($path));
-        }
     }
 }
