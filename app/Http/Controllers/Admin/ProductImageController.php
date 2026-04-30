@@ -22,7 +22,7 @@ class ProductImageController extends Controller
                 $query->where('alt_text', 'LIKE', "%{$search}%");
             })
             ->orderBy('sort_order', 'asc')
-            ->paginate(10);
+            ->paginate(env('PER_PAGE_COUNT'));
 
         $editImage = null;
 
@@ -66,28 +66,20 @@ class ProductImageController extends Controller
             ->with('success', 'Product image added successfully.');
     }
 
-    public function editByProduct(Request $request, $product_id, $id)
+    public function editByProduct($product_id, $id)
     {
-        $product = Product::findOrFail($product_id);
-        $search = $request->search;
+        Product::findOrFail($product_id);
 
-        $images = ProductImage::where('product_id', $product_id)
-            ->when($search, function ($query) use ($search) {
-                $query->where('alt_text', 'LIKE', "%{$search}%");
-            })
-            ->orderBy('sort_order', 'asc')
-            ->paginate(10);
-
-        $editImage = ProductImage::where('product_id', $product_id)
+        $image = ProductImage::where('product_id', $product_id)
             ->where('id', $id)
             ->firstOrFail();
 
-        return view('admin.product-images.manage-product', compact(
-            'product',
-            'images',
-            'editImage',
-            'search'
-        ));
+        return response()->json([
+            'status' => true,
+            'data' => $image,
+            'image_url' => asset($image->image_url),
+            'update_url' => route('admin.products.images.update', [$product_id, $image->id]),
+        ]);
     }
 
     public function updateByProduct(Request $request, $product_id, $id)

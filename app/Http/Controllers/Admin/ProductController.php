@@ -30,7 +30,7 @@ class ProductController extends Controller
                 });
             })
             ->latest()
-            ->paginate(10);
+            ->paginate(env('PER_PAGE_COUNT'));
 
         return view('admin.products.index', compact('products', 'search'));
     }
@@ -171,7 +171,7 @@ class ProductController extends Controller
 
             ProductImage::create([
                 'product_id' => $product->id,
-                'image_path' => $path,
+                'image_url' => $path,
                 'alt_text' => $product->name,
                 'sort_order' => $key,
                 'is_primary' => $product->images()->count() == 0 ? 1 : 0,

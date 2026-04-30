@@ -25,43 +25,24 @@
 
             <div class="row">
 
-                {{-- Add/Edit Left --}}
+                {{-- Add Left --}}
                 <div class="col-lg-4">
                     <div class="card">
                         <div class="card-header">
-                            <h5>{{ $editImage ? 'Edit Product Image' : 'Add Product Image' }}</h5>
+                            <h5>Add Product Image</h5>
                         </div>
                         <div class="card-body">
 
                             <form method="POST"
                                   enctype="multipart/form-data"
-                                  action="{{ $editImage
-                                    ? route('admin.products.images.update', [$product->id, $editImage->id])
-                                    : route('admin.products.images.store', $product->id) }}">
+                                  action="{{ route('admin.products.images.store', $product->id) }}">
                                 @csrf
-
-                                @if($editImage)
-                                    @method('PUT')
-                                @endif
 
                                 <div class="mb-3">
                                     <label class="form-label">
-                                        Product Image
-                                        @if(!$editImage)
-                                            <span style="color:red;">*</span>
-                                        @endif
+                                        Product Image <span style="color:red;">*</span>
                                     </label>
                                     <input type="file" name="image_path" class="form-control">
-
-                                    @if($editImage && $editImage->image_url)
-                                        <a href="{{ asset($editImage->image_url) }}" target="_blank">
-                                            <img src="{{ asset($editImage->url) }}"
-                                                 width="100"
-                                                 height="100"
-                                                 class="mt-2 rounded border"
-                                                 style="object-fit:cover;">
-                                        </a>
-                                    @endif
 
                                     @if($errors->has('image_path'))
                                         <span class="text-danger">
@@ -75,7 +56,7 @@
                                     <input type="text"
                                            name="alt_text"
                                            class="form-control"
-                                           value="{{ old('alt_text', $editImage->alt_text ?? '') }}">
+                                           value="{{ old('alt_text') }}">
 
                                     @if($errors->has('alt_text'))
                                         <span class="text-danger">
@@ -89,7 +70,7 @@
                                     <input type="number"
                                            name="sort_order"
                                            class="form-control"
-                                           value="{{ old('sort_order', $editImage->sort_order ?? 0) }}">
+                                           value="{{ old('sort_order', 0) }}">
 
                                     @if($errors->has('sort_order'))
                                         <span class="text-danger">
@@ -103,12 +84,8 @@
                                         Primary <span style="color:red;">*</span>
                                     </label>
                                     <select name="is_primary" class="form-control">
-                                        <option value="0" {{ old('is_primary', $editImage->is_primary ?? 0) == 0 ? 'selected' : '' }}>
-                                            No
-                                        </option>
-                                        <option value="1" {{ old('is_primary', $editImage->is_primary ?? 0) == 1 ? 'selected' : '' }}>
-                                            Yes
-                                        </option>
+                                        <option value="0" {{ old('is_primary', 0) == 0 ? 'selected' : '' }}>No</option>
+                                        <option value="1" {{ old('is_primary', 0) == 1 ? 'selected' : '' }}>Yes</option>
                                     </select>
 
                                     @if($errors->has('is_primary'))
@@ -119,15 +96,8 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">
-                                    {{ $editImage ? 'Update' : 'Submit' }}
+                                    Submit
                                 </button>
-
-                                @if($editImage)
-                                    <a href="{{ route('admin.products.images', $product->id) }}"
-                                       class="btn btn-secondary">
-                                        Cancel
-                                    </a>
-                                @endif
                             </form>
 
                         </div>
@@ -215,10 +185,11 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('admin.products.images.edit', [$product->id, $image->id]) }}"
-                                                       class="btn btn-sm btn-primary">
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-primary editProductImage"
+                                                            data-url="{{ route('admin.products.images.edit', [$product->id, $image->id]) }}">
                                                         <i class="fas fa-edit"></i>
-                                                    </a>
+                                                    </button>
 
                                                     <form action="{{ route('admin.products.images.delete', [$product->id, $image->id]) }}"
                                                           method="POST"
@@ -251,6 +222,96 @@
 
             </div>
 
+            {{-- Edit Product Image Modal --}}
+            <div class="modal fade" id="editProductImageModal" tabindex="-1" aria-labelledby="editProductImageModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <form method="POST" enctype="multipart/form-data" id="editProductImageForm">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editProductImageModalLabel">Edit Product Image</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label">Product Image</label>
+                                        <input type="file" name="image_path" class="form-control">
+
+                                        <a href="#" target="_blank" id="editImageLink" class="d-inline-block mt-2">
+                                            <img src=""
+                                                 id="editImagePreview"
+                                                 width="100"
+                                                 height="100"
+                                                 class="rounded border"
+                                                 style="object-fit:cover;">
+                                        </a>
+
+                                        @if($errors->has('image_path'))
+                                            <span class="text-danger">
+                                                {{ $errors->first('image_path') }}
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label">Alt Text</label>
+                                        <input type="text"
+                                               name="alt_text"
+                                               id="edit_alt_text"
+                                               class="form-control">
+
+                                        @if($errors->has('alt_text'))
+                                            <span class="text-danger">
+                                                {{ $errors->first('alt_text') }}
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label">Sort Order</label>
+                                        <input type="number"
+                                               name="sort_order"
+                                               id="edit_sort_order"
+                                               class="form-control">
+
+                                        @if($errors->has('sort_order'))
+                                            <span class="text-danger">
+                                                {{ $errors->first('sort_order') }}
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label">
+                                            Primary <span style="color:red;">*</span>
+                                        </label>
+                                        <select name="is_primary" id="edit_is_primary" class="form-control">
+                                            <option value="0">No</option>
+                                            <option value="1">Yes</option>
+                                        </select>
+
+                                        @if($errors->has('is_primary'))
+                                            <span class="text-danger">
+                                                {{ $errors->first('is_primary') }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -261,6 +322,26 @@
 <script>
     $('#selectAll').on('click', function () {
         $('.rowCheckbox').prop('checked', this.checked);
+    });
+
+    $('.editProductImage').on('click', function () {
+        let url = $(this).data('url');
+
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (response) {
+                if (response.status) {
+                    $('#editProductImageForm').attr('action', response.update_url);
+                    $('#edit_alt_text').val(response.data.alt_text);
+                    $('#edit_sort_order').val(response.data.sort_order);
+                    $('#edit_is_primary').val(response.data.is_primary);
+                    $('#editImagePreview').attr('src', response.image_url);
+                    $('#editImageLink').attr('href', response.image_url);
+                    $('#editProductImageModal').modal('show');
+                }
+            }
+        });
     });
 
     $('#bulkDelete').on('click', function () {
@@ -293,4 +374,4 @@
         });
     });
 </script>
-@endsection 
+@endsection

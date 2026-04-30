@@ -28,7 +28,7 @@ class CategoryController extends Controller
 
         $categories = $query->orderBy('sort_order', 'asc')
             ->orderBy('name', 'asc')
-            ->paginate(10)
+            ->paginate(env('PER_PAGE_COUNT'))
             ->appends($request->query());
 
         return view('admin.categories.index', compact('categories'));

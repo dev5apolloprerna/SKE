@@ -52,18 +52,12 @@ class Product extends Model
         return $this->hasMany(ProductImage::class)->orderBy('sort_order', 'asc');
     }
 
-    public function primaryImage()
+        public function primaryImage()
     {
-        return $this->hasOne(ProductImage::class)->where('is_primary', 1);
+        return $this->hasOne(ProductImage::class, 'product_id', 'id')
+            ->where('is_primary', 1);
     }
-     public function getPrimaryImageAttribute(): string
-    {
-        $img = $this->images()->first();
-        if ($img && file_exists(public_path($img->image_url))) {
-            return asset($img->image_url);
-        }
-        return asset('images/default-product.jpg');
-    }
+
 
     /** Dimension string e.g. 300 × 200 × 100 mm */
     public function getDimensionsAttribute(): string
