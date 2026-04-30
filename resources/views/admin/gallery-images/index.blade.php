@@ -18,41 +18,34 @@
 
 <div class="row">
 
-    {{-- LEFT SIDE ADD / EDIT --}}
+    {{-- LEFT SIDE ADD --}}
     <div class="col-lg-4">
         <div class="card">
             <div class="card-header">
-                <h5>{{ $editGalleryImage ? 'Edit Image' : 'Add Image' }}</h5>
+                <h5>Add Image</h5>
             </div>
 
             <div class="card-body">
-
                 <form method="POST" enctype="multipart/form-data"
-                      action="{{ $editGalleryImage
-                        ? route('admin.gallery-images.update',$editGalleryImage->id)
-                        : route('admin.gallery-images.store') }}">
+                      action="{{ route('admin.gallery-images.store') }}">
                     @csrf
-
-                    @if($editGalleryImage)
-                        @method('PUT')
-                    @endif
 
                     {{-- TITLE --}}
                     <div class="mb-3">
                         <label>Title</label>
                         <input type="text" name="title" class="form-control"
-                               value="{{ old('title',$editGalleryImage->title ?? '') }}">
+                               value="{{ old('title') }}">
+                        @if($errors->has('title'))
+                            <span class="text-danger">
+                                {{ $errors->first('title') }}
+                            </span>
+                        @endif
                     </div>
 
                     {{-- IMAGE --}}
                     <div class="mb-3">
                         <label>Image <span style="color:red;">*</span></label>
                         <input type="file" name="image_path" class="form-control">
-
-                        @if($editGalleryImage && $editGalleryImage->image_url)
-                            <img src="{{ asset($editGalleryImage->image_url) }}"
-                                 width="80" class="mt-2 rounded">
-                        @endif
 
                         @if($errors->has('image_path'))
                             <span class="text-danger">
@@ -64,35 +57,44 @@
                     {{-- DESCRIPTION --}}
                     <div class="mb-3">
                         <label>Description</label>
-                        <textarea name="description" class="form-control">{{ old('description',$editGalleryImage->description ?? '') }}</textarea>
+                        <textarea name="description" class="form-control">{{ old('description') }}</textarea>
+                        @if($errors->has('description'))
+                            <span class="text-danger">
+                                {{ $errors->first('description') }}
+                            </span>
+                        @endif
                     </div>
 
                     {{-- SORT --}}
                     <div class="mb-3">
                         <label>Sort Order</label>
                         <input type="number" name="sort_order" class="form-control"
-                               value="{{ old('sort_order',$editGalleryImage->sort_order ?? 0) }}">
+                               value="{{ old('sort_order', 0) }}">
+                        @if($errors->has('sort_order'))
+                            <span class="text-danger">
+                                {{ $errors->first('sort_order') }}
+                            </span>
+                        @endif
                     </div>
 
                     {{-- STATUS --}}
                     <div class="mb-3">
                         <label>Status <span style="color:red;">*</span></label>
                         <select name="is_active" class="form-control">
-                            <option value="1" {{ old('is_active',$editGalleryImage->is_active ?? 1)==1?'selected':'' }}>Active</option>
-                            <option value="0" {{ old('is_active',$editGalleryImage->is_active ?? 1)==0?'selected':'' }}>Inactive</option>
+                            <option value="1" {{ old('is_active', 1)==1?'selected':'' }}>Active</option>
+                            <option value="0" {{ old('is_active', 1)==0?'selected':'' }}>Inactive</option>
                         </select>
+                        @if($errors->has('is_active'))
+                            <span class="text-danger">
+                                {{ $errors->first('is_active') }}
+                            </span>
+                        @endif
                     </div>
 
                     <button class="btn btn-primary">
-                        {{ $editGalleryImage ? 'Update' : 'Submit' }}
+                        Submit
                     </button>
-
-                    @if($editGalleryImage)
-                        <a href="{{ route('admin.gallery-images.index') }}" class="btn btn-secondary">Cancel</a>
-                    @endif
-
                 </form>
-
             </div>
         </div>
     </div>
@@ -148,7 +150,6 @@
                                     <input type="checkbox" class="rowCheckbox" value="{{ $row->id }}">
                                 </td>
 
-                                {{-- IMAGE --}}
                                 <td>
                                     @if($row->image_url)
                                         <img src="{{ asset($row->image_url) }}"
@@ -169,10 +170,17 @@
                                 </td>
 
                                 <td>
-                                    <a href="{{ route('admin.gallery-images.edit',$row->id) }}"
-                                       class="btn btn-sm btn-primary">
+                                    <button type="button"
+                                            class="btn btn-sm btn-primary editBtn"
+                                            data-id="{{ $row->id }}"
+                                            data-title="{{ $row->title }}"
+                                            data-description="{{ $row->description }}"
+                                            data-sort_order="{{ $row->sort_order }}"
+                                            data-is_active="{{ $row->is_active }}"
+                                            data-image="{{ $row->image_url ? asset($row->image_url) : '' }}"
+                                            data-action="{{ route('admin.gallery-images.update', $row->id) }}">
                                         <i class="fas fa-edit"></i>
-                                    </a>
+                                    </button>
 
                                     <form method="POST"
                                           action="{{ route('admin.gallery-images.destroy',$row->id) }}"
@@ -205,6 +213,93 @@
 
 </div>
 
+{{-- EDIT MODAL --}}
+<div class="modal fade" id="editGalleryImageModal" tabindex="-1" aria-labelledby="editGalleryImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form method="POST" enctype="multipart/form-data" id="editGalleryImageForm">
+            @csrf
+            @method('PUT')
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editGalleryImageModalLabel">Edit Image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    {{-- TITLE --}}
+                    <div class="mb-3">
+                        <label>Title</label>
+                        <input type="text" name="title" id="edit_title" class="form-control">
+                        @if($errors->has('title'))
+                            <span class="text-danger">
+                                {{ $errors->first('title') }}
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- IMAGE --}}
+                    <div class="mb-3">
+                        <label>Image</label>
+                        <input type="file" name="image_path" class="form-control">
+
+                        <div id="edit_image_preview_wrap" class="mt-2" style="display:none;">
+                            <img src="" id="edit_image_preview" width="80" class="rounded">
+                        </div>
+
+                        @if($errors->has('image_path'))
+                            <span class="text-danger">
+                                {{ $errors->first('image_path') }}
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- DESCRIPTION --}}
+                    <div class="mb-3">
+                        <label>Description</label>
+                        <textarea name="description" id="edit_description" class="form-control"></textarea>
+                        @if($errors->has('description'))
+                            <span class="text-danger">
+                                {{ $errors->first('description') }}
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- SORT --}}
+                    <div class="mb-3">
+                        <label>Sort Order</label>
+                        <input type="number" name="sort_order" id="edit_sort_order" class="form-control">
+                        @if($errors->has('sort_order'))
+                            <span class="text-danger">
+                                {{ $errors->first('sort_order') }}
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- STATUS --}}
+                    <div class="mb-3">
+                        <label>Status <span style="color:red;">*</span></label>
+                        <select name="is_active" id="edit_is_active" class="form-control">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                        @if($errors->has('is_active'))
+                            <span class="text-danger">
+                                {{ $errors->first('is_active') }}
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 </div>
 </div>
 </div>
@@ -213,6 +308,25 @@
 
 @section('scripts')
 <script>
+$(document).on('click', '.editBtn', function(){
+    $('#editGalleryImageForm').attr('action', $(this).data('action'));
+    $('#edit_title').val($(this).data('title'));
+    $('#edit_description').val($(this).data('description'));
+    $('#edit_sort_order').val($(this).data('sort_order'));
+    $('#edit_is_active').val($(this).data('is_active'));
+
+    let imageUrl = $(this).data('image');
+
+    if(imageUrl){
+        $('#edit_image_preview').attr('src', imageUrl);
+        $('#edit_image_preview_wrap').show();
+    } else {
+        $('#edit_image_preview').attr('src', '');
+        $('#edit_image_preview_wrap').hide();
+    }
+
+    $('#editGalleryImageModal').modal('show');
+});
 
 $('#selectAll').click(function(){
     $('.rowCheckbox').prop('checked', this.checked);
@@ -246,6 +360,5 @@ $('#bulkDelete').click(function(){
     });
 
 });
-
 </script>
 @endsection

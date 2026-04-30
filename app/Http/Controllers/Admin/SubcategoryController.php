@@ -20,7 +20,7 @@ class SubcategoryController extends Controller
                 $query->where('name', 'LIKE', "%{$search}%");
             })
             ->orderBy('sort_order', 'asc')
-            ->paginate(10);
+            ->paginate(env('PER_PAGE_COUNT'));
 
         return view('admin.subcategories.index', compact('subcategories', 'search'));
     }
@@ -34,7 +34,7 @@ class SubcategoryController extends Controller
             $query->where('name', 'LIKE', "%{$search}%");
         })
         ->orderBy('id', 'desc')
-        ->paginate(10);
+        ->paginate(env('PER_PAGE_COUNT'));
 
     $editSubcategory = null;
 
@@ -70,28 +70,16 @@ public function storeByCategory(Request $request, $category_id)
         ->with('success', 'Subcategory added successfully.');
 }
 
-public function editByCategory(Request $request, $category_id, $id)
+public function editByCategory($category_id, $id)
 {
-    $category = Category::findOrFail($category_id);
-    $search = $request->search;
-
-    $subcategories = Subcategory::where('category_id', $category_id)
-        ->when($search, function ($query) use ($search) {
-            $query->where('name', 'LIKE', "%{$search}%");
-        })
-        ->orderBy('id', 'desc')
-        ->paginate(10);
-
-    $editSubcategory = Subcategory::where('category_id', $category_id)
+    $subcategory = Subcategory::where('category_id', $category_id)
         ->where('id', $id)
         ->firstOrFail();
 
-    return view('admin.subcategories.manage-category', compact(
-        'category',
-        'subcategories',
-        'editSubcategory',
-        'search'
-    ));
+    return response()->json([
+        'status' => true,
+        'subcategory' => $subcategory,
+    ]);
 }
 
 public function updateByCategory(Request $request, $category_id, $id)
@@ -121,13 +109,20 @@ public function updateByCategory(Request $request, $category_id, $id)
         ->with('success', 'Subcategory updated successfully.');
 }
 
-public function deleteByCategory($category_id, $id)
+public function deleteByCategory(Request $request, $category_id, $id)
 {
     $subcategory = Subcategory::where('category_id', $category_id)
         ->where('id', $id)
         ->firstOrFail();
 
     $subcategory->delete();
+
+    if ($request->ajax()) {
+        return response()->json([
+            'status' => true,
+            'message' => 'Subcategory deleted successfully.',
+        ]);
+    }
 
     return redirect()->route('admin.categories.subcategories', $category_id)
         ->with('success', 'Subcategory deleted successfully.');

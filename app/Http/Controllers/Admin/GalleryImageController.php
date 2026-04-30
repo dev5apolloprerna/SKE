@@ -24,7 +24,7 @@ class GalleryImageController extends Controller
             })
             ->orderBy('sort_order', 'asc')
             ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->paginate(env('PER_PAGE_COUNT'));
 
         $editGalleryImage = null;
 
@@ -68,26 +68,12 @@ class GalleryImageController extends Controller
 
     /* ===============================
         EDIT
+        Note: Edit is handled by modal popup from listing page.
     =============================== */
 
-    public function edit(Request $request, $id)
+    public function edit($id)
     {
-        $search = $request->search;
-
-        $galleryImages = GalleryImage::when($search, function ($query) use ($search) {
-                $query->where('title', 'LIKE', "%{$search}%");
-            })
-            ->orderBy('sort_order', 'asc')
-            ->orderBy('id', 'desc')
-            ->paginate(10);
-
-        $editGalleryImage = GalleryImage::findOrFail($id);
-
-        return view('admin.gallery-images.index', compact(
-            'galleryImages',
-            'editGalleryImage',
-            'search'
-        ));
+        return redirect()->route('admin.gallery-images.index');
     }
 
     /* ===============================

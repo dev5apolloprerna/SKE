@@ -23,7 +23,7 @@ class InquiryController extends Controller
                     });
             })
             ->latest()
-            ->paginate(10);
+            ->paginate(env('PER_PAGE_COUNT'));
 
         return view('admin.inquiries.index', compact('inquiries', 'search'));
     }

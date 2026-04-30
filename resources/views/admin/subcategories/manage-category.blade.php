@@ -23,34 +23,22 @@
 
             <div class="row">
 
-                {{-- Add/Edit Left Side --}}
+                {{-- Add Left Side --}}
                 <div class="col-lg-4">
                     <div class="card">
                         <div class="card-header">
-                            <h5>{{ $editSubcategory ? 'Edit Subcategory' : 'Add Subcategory' }}</h5>
+                            <h5>Add Subcategory</h5>
                         </div>
                         <div class="card-body">
 
-                            <form method="POST"
-                                  action="{{ $editSubcategory
-                                    ? route('admin.categories.subcategories.update', [$category->id, $editSubcategory->id])
-                                    : route('admin.categories.subcategories.store', $category->id) }}">
+                            <form method="POST" action="{{ route('admin.categories.subcategories.store', $category->id) }}">
                                 @csrf
 
-                                @if($editSubcategory)
-                                    @method('PUT')
-                                @endif
-
                                 <div class="mb-3">
-                                    <label class="form-label">
-                                        Subcategory Name <span style="color:red;">*</span>
-                                    </label>
-                                    <input type="text"
-                                           name="name"
-                                           class="form-control"
-                                           value="{{ old('name', $editSubcategory->name ?? '') }}">
+                                    <label class="form-label">Subcategory Name <span style="color:red;">*</span></label>
+                                    <input type="text" name="name" class="form-control" value="{{ old('name') }}">
 
-                                    @if($errors->has('name'))
+                                    @if($errors->has('name') && !old('_method'))
                                         <span class="text-danger">
                                             {{ $errors->first('name') }}
                                         </span>
@@ -59,11 +47,9 @@
 
                                 <div class="mb-3">
                                     <label class="form-label">Description</label>
-                                    <textarea name="description"
-                                              class="form-control"
-                                              rows="3">{{ old('description', $editSubcategory->description ?? '') }}</textarea>
+                                    <textarea name="description" class="form-control" rows="3">{{ old('description') }}</textarea>
 
-                                    @if($errors->has('description'))
+                                    @if($errors->has('description') && !old('_method'))
                                         <span class="text-danger">
                                             {{ $errors->first('description') }}
                                         </span>
@@ -72,12 +58,9 @@
 
                                 <div class="mb-3">
                                     <label class="form-label">Sort Order</label>
-                                    <input type="number"
-                                           name="sort_order"
-                                           class="form-control"
-                                           value="{{ old('sort_order', $editSubcategory->sort_order ?? 0) }}">
+                                    <input type="number" name="sort_order" class="form-control" value="{{ old('sort_order', 0) }}">
 
-                                    @if($errors->has('sort_order'))
+                                    @if($errors->has('sort_order') && !old('_method'))
                                         <span class="text-danger">
                                             {{ $errors->first('sort_order') }}
                                         </span>
@@ -85,35 +68,20 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label">
-                                        Status <span style="color:red;">*</span>
-                                    </label>
+                                    <label class="form-label">Status <span style="color:red;">*</span></label>
                                     <select name="is_active" class="form-control">
-                                        <option value="1" {{ old('is_active', $editSubcategory->is_active ?? 1) == 1 ? 'selected' : '' }}>
-                                            Active
-                                        </option>
-                                        <option value="0" {{ old('is_active', $editSubcategory->is_active ?? 1) == 0 ? 'selected' : '' }}>
-                                            Inactive
-                                        </option>
+                                        <option value="1" {{ old('is_active', 1) == 1 ? 'selected' : '' }}>Active</option>
+                                        <option value="0" {{ old('is_active', 1) == 0 ? 'selected' : '' }}>Inactive</option>
                                     </select>
 
-                                    @if($errors->has('is_active'))
+                                    @if($errors->has('is_active') && !old('_method'))
                                         <span class="text-danger">
                                             {{ $errors->first('is_active') }}
                                         </span>
                                     @endif
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">
-                                    {{ $editSubcategory ? 'Update' : 'Submit' }}
-                                </button>
-
-                                @if($editSubcategory)
-                                    <a href="{{ route('admin.categories.subcategories', $category->id) }}"
-                                       class="btn btn-secondary">
-                                        Cancel
-                                    </a>
-                                @endif
+                                <button type="submit" class="btn btn-primary">Submit</button>
                             </form>
 
                         </div>
@@ -129,9 +97,7 @@
 
                         <div class="card-body">
 
-                            <form method="GET"
-                                  action="{{ route('admin.categories.subcategories', $category->id) }}"
-                                  class="mb-3">
+                            <form method="GET" action="{{ route('admin.categories.subcategories', $category->id) }}" class="mb-3">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label class="form-label">Search Subcategory</label>
@@ -145,8 +111,7 @@
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-search"></i> Search
                                         </button>
-                                        <a href="{{ route('admin.categories.subcategories', $category->id) }}"
-                                           class="btn btn-secondary">
+                                        <a href="{{ route('admin.categories.subcategories', $category->id) }}" class="btn btn-secondary">
                                             Reset
                                         </a>
                                     </div>
@@ -173,9 +138,7 @@
                                         @forelse($subcategories as $subcategory)
                                             <tr>
                                                 <td>
-                                                    <input type="checkbox"
-                                                           class="rowCheckbox"
-                                                           value="{{ $subcategory->id }}">
+                                                    <input type="checkbox" class="rowCheckbox" value="{{ $subcategory->id }}">
                                                 </td>
                                                 <td>{{ $subcategory->name }}</td>
                                                 <td>{{ Str::limit($subcategory->description, 50) }}</td>
@@ -188,21 +151,22 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('admin.categories.subcategories.edit', [$category->id, $subcategory->id]) }}"
-                                                       class="btn btn-sm btn-primary">
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-primary editSubcategory"
+                                                            data-id="{{ $subcategory->id }}"
+                                                            data-name="{{ $subcategory->name }}"
+                                                            data-description="{{ $subcategory->description }}"
+                                                            data-sort_order="{{ $subcategory->sort_order }}"
+                                                            data-is_active="{{ $subcategory->is_active }}"
+                                                            data-update-url="{{ route('admin.categories.subcategories.update', [$category->id, $subcategory->id]) }}">
                                                         <i class="fas fa-edit"></i>
-                                                    </a>
+                                                    </button>
 
-                                                    <form action="{{ route('admin.categories.subcategories.delete', [$category->id, $subcategory->id]) }}"
-                                                          method="POST"
-                                                          style="display:inline-block;"
-                                                          onsubmit="return confirm('Are you sure you want to delete this record?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-danger deleteSubcategory"
+                                                            data-url="{{ route('admin.categories.subcategories.delete', [$category->id, $subcategory->id]) }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         @empty
@@ -228,12 +192,113 @@
     </div>
 </div>
 
+{{-- Edit Modal --}}
+<div class="modal fade" id="editSubcategoryModal" tabindex="-1" aria-labelledby="editSubcategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" id="editSubcategoryForm" action="">
+                @csrf
+                @method('PUT')
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editSubcategoryModalLabel">Edit Subcategory</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Subcategory Name <span style="color:red;">*</span></label>
+                        <input type="text" name="name" id="edit_name" class="form-control" value="{{ old('_method') ? old('name') : '' }}">
+
+                        @if($errors->has('name') && old('_method'))
+                            <span class="text-danger">
+                                {{ $errors->first('name') }}
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" id="edit_description" class="form-control" rows="3">{{ old('_method') ? old('description') : '' }}</textarea>
+
+                        @if($errors->has('description') && old('_method'))
+                            <span class="text-danger">
+                                {{ $errors->first('description') }}
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Sort Order</label>
+                        <input type="number" name="sort_order" id="edit_sort_order" class="form-control" value="{{ old('_method') ? old('sort_order') : '' }}">
+
+                        @if($errors->has('sort_order') && old('_method'))
+                            <span class="text-danger">
+                                {{ $errors->first('sort_order') }}
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Status <span style="color:red;">*</span></label>
+                        <select name="is_active" id="edit_is_active" class="form-control">
+                            <option value="1" {{ old('_method') && old('is_active') == 1 ? 'selected' : '' }}>Active</option>
+                            <option value="0" {{ old('_method') && old('is_active') == 0 ? 'selected' : '' }}>Inactive</option>
+                        </select>
+
+                        @if($errors->has('is_active') && old('_method'))
+                            <span class="text-danger">
+                                {{ $errors->first('is_active') }}
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
 <script>
     $('#selectAll').on('click', function () {
         $('.rowCheckbox').prop('checked', this.checked);
+    });
+
+    $('.editSubcategory').on('click', function () {
+        $('#editSubcategoryForm').attr('action', $(this).data('update-url'));
+        $('#edit_name').val($(this).data('name'));
+        $('#edit_description').val($(this).data('description'));
+        $('#edit_sort_order').val($(this).data('sort_order'));
+        $('#edit_is_active').val($(this).data('is_active'));
+
+        $('#editSubcategoryModal').modal('show');
+    });
+
+    $('.deleteSubcategory').on('click', function () {
+        if (!confirm('Are you sure you want to delete this record?')) {
+            return false;
+        }
+
+        $.ajax({
+            url: $(this).data('url'),
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                _method: "DELETE"
+            },
+            success: function (response) {
+                alert(response.message);
+                location.reload();
+            }
+        });
     });
 
     $('#bulkDelete').on('click', function () {
@@ -265,5 +330,9 @@
             }
         });
     });
+
+    @if($errors->any() && old('_method'))
+        $('#editSubcategoryModal').modal('show');
+    @endif
 </script>
 @endsection
