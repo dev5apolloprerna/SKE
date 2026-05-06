@@ -31,7 +31,7 @@ class FrontCategoryController extends Controller
                         ->firstOrFail();
         $products    = Product::where('subcategory_id', $subcategory->id)
                         ->active()
-                        ->with(['images','category'])
+                        ->with(['images','category','primaryImage'])
                         ->paginate(12);
         $categories  = Category::active()->with('subcategories')->get();
         return view('front.products.subcategory', compact('category','subcategory','products','categories'));

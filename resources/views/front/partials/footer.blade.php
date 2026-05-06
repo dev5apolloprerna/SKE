@@ -36,9 +36,9 @@
                 <div class="footer-contact">
                     <div class="footer-contact-item"><i class="fa-solid fa-location-dot"></i><span>Kadi – 382715, Mehsana, Gujarat, India</span></div>
                     <div class="footer-contact-item"><i class="fa-solid fa-phone"></i><span><a href="tel:+917490806940" style="color:inherit;">+91 74908 06940</a></span></div>
-                    <div class="footer-contact-item"><i class="fa-solid fa-envelope"></i><span><a href="mailto:info@ske.com" style="color:inherit;">info@ske.com</a></span></div>
-                    <div class="footer-contact-item"><i class="fa-solid fa-globe"></i><span><a href="https://www.ske.com" target="_blank" style="color:inherit;">www.ske.com</a></span></div>
-                    <div class="footer-contact-item"><i class="fa-solid fa-clock"></i><span>Mon–Sat: 9:00 AM – 6:00 PM</span></div>
+                    <div class="footer-contact-item"><i class="fa-solid fa-envelope"></i><span><a href="mailto:info@shreekalika.com" style="color:inherit;">info@shreekalika.com</a></span></div>
+                    <div class="footer-contact-item"><i class="fa-solid fa-globe"></i><span><a href="https://www.shreekalika.com" target="_blank" style="color:inherit;">www.shreekalika.com</a></span></div>
+                    
                 </div>
             </div>
         </div>

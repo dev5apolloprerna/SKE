@@ -63,11 +63,23 @@
                     @foreach($products as $product)
                     <a class="product-card" href="{{ route('product.show', $product->slug) }}" data-animate>
                         <div class="product-thumb">
-                            @if($product->is_featured)<div class="product-tag">Featured</div>@endif
-                            <img src="{{ $product->primary_image }}"
+                            
+                           @if($product->primaryImage && $product->primaryImage->image_url)
+                        
+                            <div class="product-tag">Featured</div>
+                        
+                            <img src="{{ asset($product->primaryImage->image_url) }}"
                                  alt="{{ $product->name }}"
                                  loading="lazy"
                                  onerror="this.src='{{ asset('images/default-product.jpg') }}'"/>
+                        
+                        @else
+                        
+                            <img src="{{ asset('images/default-product.jpg') }}"
+                                 alt="No Image"
+                                 loading="lazy"/>
+                        
+                        @endif
                         </div>
                         <div class="product-body">
                             <div class="product-category">{{ $product->subcategory->name ?? $category->name }}</div>

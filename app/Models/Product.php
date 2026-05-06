@@ -51,8 +51,7 @@ class Product extends Model
     {
         return $this->hasMany(ProductImage::class)->orderBy('sort_order', 'asc');
     }
-
-        public function primaryImage()
+    public function primaryImage()
     {
         return $this->hasOne(ProductImage::class, 'product_id', 'id')
             ->where('is_primary', 1);

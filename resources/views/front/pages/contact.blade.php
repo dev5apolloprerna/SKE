@@ -41,23 +41,17 @@
                         <div class="contact-info-icon"><i class="fa-solid fa-envelope"></i></div>
                         <div>
                             <div class="contact-info-label">Email</div>
-                            <div class="contact-info-value"><a href="mailto:info@ske.com">info@ske.com</a></div>
+                            <div class="contact-info-value"><a href="mailto:info@shreekalika.com">info@shreekalika.com</a></div>
                         </div>
                     </div>
                     <div class="contact-info-item">
                         <div class="contact-info-icon"><i class="fa-solid fa-globe"></i></div>
                         <div>
                             <div class="contact-info-label">Website</div>
-                            <div class="contact-info-value"><a href="https://www.ske.com" target="_blank">www.ske.com</a></div>
+                            <div class="contact-info-value"><a href="https://www.shreekalika.com" target="_blank">www.shreekalika.com</a></div>
                         </div>
                     </div>
-                    <div class="contact-info-item">
-                        <div class="contact-info-icon"><i class="fa-solid fa-clock"></i></div>
-                        <div>
-                            <div class="contact-info-label">Business Hours</div>
-                            <div class="contact-info-value">Mon – Sat: 9:00 AM – 6:00 PM</div>
-                        </div>
-                    </div>
+                   
 
                     <div style="margin-top:28px;display:flex;gap:10px;">
                         <a href="https://wa.me/917490806940" target="_blank" style="flex:1;background:#25D366;color:#fff;font-size:0.85rem;font-weight:700;padding:11px 10px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;transition:opacity 0.2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">

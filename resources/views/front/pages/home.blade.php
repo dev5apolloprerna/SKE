@@ -89,7 +89,7 @@
             @foreach($categories as $cat)
             <a class="cat-card" href="{{ route('category.show', $cat->slug) }}" data-animate>
                 <div class="cat-card-image">
-                    <img src="{{ $cat->image }}" alt="{{ $cat->name }}" onerror="this.src='{{ asset('images/default-category.jpg') }}'"/>
+                    <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" onerror="this.src='{{ asset('images/default-category.jpg') }}'"/>
                     <div class="cat-card-overlay"></div>
                 </div>
                 <div class="cat-card-body">

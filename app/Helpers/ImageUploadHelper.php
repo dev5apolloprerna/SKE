@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 class ImageUploadHelper
 {
-    private static string $liveBasePath = '/home/getdemo/public_html/SKE/';
+    private static string $liveBasePath = '/home/shreekalika/public_html/';
 
     public static function upload($file, string $folder): string
     {

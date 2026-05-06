@@ -27,21 +27,27 @@
                 <div class="product-gallery-wrap">
                     <div class="product-main-img">
                         <img id="mainProductImg"
-                             src="{{ $product->primary_image }}"
-                             alt="{{ $product->name }}"
-                             onerror="this.src='{{ asset('images/default-product.jpg') }}'"/>
+                         src="{{ $product->primaryImage && $product->primaryImage->image_url 
+                                ? asset($product->primaryImage->image_url) 
+                                : asset('images/default-product.jpg') }}"
+                         alt="{{ $product->name }}"
+                         loading="lazy">
                     </div>
 
-                    @if($product->images->count() > 1)
+
+                    @if($product->images->count() > 0)
                     <div class="product-thumbs">
                         @foreach($product->images as $i => $img)
-                        <div class="product-thumb-item {{ $i === 0 ? 'active' : '' }}"
-                             data-src="{{ $img->url }}"
-                             data-alt="{{ $img->alt_text ?? $product->name }}">
-                            <img src="{{ $img->url }}"
-                                 alt="{{ $img->alt_text ?? $product->name }}"
-                                 onerror="this.src='{{ asset('images/default-product.jpg') }}'"/>
-                        </div>
+                            <div class="product-thumb-item {{ $i === 0 ? 'active' : '' }}"
+                                 data-src="{{ asset($img->image_url) }}"
+                                 data-alt="{{ $img->alt_text ?? $product->name }}">
+                        
+                                <img src="{{ asset($img->image_url) }}"
+                                     alt="{{ $img->alt_text ?? $product->name }}"
+                                     loading="lazy"
+                                     onerror="this.src='{{ asset('images/default-product.jpg') }}'"/>
+                        
+                            </div>
                         @endforeach
                     </div>
                     @endif
@@ -158,10 +164,13 @@
             @foreach($related as $rel)
             <a class="product-card" href="{{ route('product.show', $rel->slug) }}" data-animate>
                 <div class="product-thumb">
-                    <img src="{{ $rel->primary_image }}"
+                     <img id="mainProductImg"
+                         src="{{ $rel->primaryImage && $rel->primaryImage->image_url 
+                                ? asset($rel->primaryImage->image_url) 
+                                : asset('images/default-product.jpg') }}"
                          alt="{{ $rel->name }}"
-                         loading="lazy"
-                         onerror="this.src='{{ asset('images/default-product.jpg') }}'"/>
+                         loading="lazy">
+                         
                 </div>
                 <div class="product-body">
                     <div class="product-category">{{ $product->subcategory->name ?? $product->category->name }}</div>
