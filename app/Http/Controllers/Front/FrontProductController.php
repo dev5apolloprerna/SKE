@@ -19,7 +19,7 @@ class FrontProductController extends Controller
     public function show(string $slug)
     {
         $product  = Product::where('slug', $slug)->where('is_active', 1)
-                        ->with(['images','category','subcategory'])
+                        ->with(['images','category','subcategory','primaryImage'])
                         ->firstOrFail();
         $related  = Product::where('subcategory_id', $product->subcategory_id)
                         ->where('id', '!=', $product->id)

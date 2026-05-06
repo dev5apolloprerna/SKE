@@ -113,7 +113,7 @@
                                             <div class="row">
                                                 @foreach($product->images as $image)
                                                     <div class="col-md-2 mb-3">
-                                                        <img src="{{ asset($image->image_path) }}"
+                                                        <img src="{{ asset($image->image_url) }}"
                                                              class="img-fluid rounded border"
                                                              style="height:100px;object-fit:cover;width:100%;">
                                                         <form action="{{ route('admin.products.deleteImage', $image->id) }}"
@@ -226,7 +226,7 @@
 
         if (categoryId) {
             $.ajax({
-                url: "{{ url('../SKE/admin/get-subcategories') }}/" + categoryId,
+                url: "{{ url('../admin/get-subcategories') }}/" + categoryId,
                 type: "GET",
                 success: function (data) {
                     $.each(data, function (key, value) {

@@ -19,10 +19,10 @@
         <div class="gallery-grid">
             @foreach($images as $img)
             <div class="gallery-item"
-                 data-full="{{ $img->url }}"
+                 data-full="{{ $img->image_url }}"
                  data-caption="{{ $img->title }}"
                  data-animate>
-                <img src="{{ $img->url }}"
+                <img src="{{ $img->image_url }}"
                      alt="{{ $img->title }}"
                      loading="lazy"
                      onerror="this.src='{{ asset('images/default-product.jpg') }}'"/>

@@ -13,12 +13,14 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GalleryImageController;
 
 
+
 use App\Http\Controllers\Front\FrontHomeController;
 use App\Http\Controllers\Front\FrontCategoryController;
 use App\Http\Controllers\Front\FrontProductController;
 use App\Http\Controllers\Front\GalleryController;
 use App\Http\Controllers\Front\AboutController;
 use App\Http\Controllers\Front\ContactController;
+
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -147,7 +149,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('inquiries', InquiryController::class)->only(['index', 'edit', 'update', 'destroy']);
     Route::post('inquiries-bulk-delete', [InquiryController::class, 'bulkDelete'])->name('inquiries.bulkDelete');
 });
-
 
 
 Route::get('/', [FrontHomeController::class, 'index'])->name('home');
